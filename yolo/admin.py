@@ -1,3 +1,4 @@
 from django.contrib import admin
+from .database import Alerts
 
-# Register your models here.
+admin.site.register(Alerts)

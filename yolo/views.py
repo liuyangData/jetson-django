@@ -1,10 +1,9 @@
 import torch.nn.functional as F
 from yolo.models.tools import non_max_suppression, scale_coords, Annotator, processIm, addCameraNumber, containsInBounds, getMidPoint, displayAlert, select_device
 from yolo.models.loading import DetectMultiBackend, letterbox
-import cv2, os, datetime, uuid, numpy as np, time
+import cv2, datetime, numpy as np, time
 from django.http import StreamingHttpResponse
-
-ROOT_DIR = os.getcwd()
+from yolo.database import Alerts
 
 class Person:
 	
@@ -43,12 +42,12 @@ class Person:
 
 	def __init__(self, personId):
 		self.personId = personId
-		self.alertId = uuid.uuid4().hex
+		self.alertId = datetime.datetime.now().strftime("%Y-%m-%dT%H:%M:%SZ")
 		self.setFileNames()
 
 	def setFileNames(self):
-		self.videoName = f'{ROOT_DIR}/yolo/outputs/alert-{self.alertId}.mp4'
-		self.imgName = f'{ROOT_DIR}/yolo/outputs/thumbnail-{self.alertId}.jpg'
+		self.videoName = f'yolo/outputs/alert-{self.alertId}.mp4'
+		self.imgName = f'yolo/outputs/thumbnail-{self.alertId}.jpg'
 		self.resultFileName = f"alert-{self.alertId}"
 
 	def updatePPE(self, det):
@@ -210,10 +209,10 @@ class Person:
 			violations = [ 'No Mask']
 
 		for violation in violations:
-			payload = {"dt": self.dt, "duration": "00:00:10", "violation": violation, "video":self.resultFileName, "camera": self.camName}
-			print(payload)
-
-		self.alertId = uuid.uuid4().hex
+			alert = Alerts(datetime=str(self.dt), camera=self.camName, violation=violation)
+			alert.save()
+      
+		self.alertId = datetime.datetime.now().strftime("%Y-%m-%dT%H:%M:%SZ") 
 		self.resultFileName = f"alert-{self.alertId}"
 
 	def resetPerson(self):
@@ -397,17 +396,6 @@ def detectYolov5_PPE(rtsp):
 		results = cv2.imencode('.jpg', im0)[1].tobytes()
 		yield (b'--frame\r\n'b'Content-Type: image/jpeg\r\n\r\n' + results + b'\r\n')
 
-def stream(request, rtsp):
-  response = StreamingHttpResponse(detectYolov5_PPE(rtsp),content_type="multipart/x-mixed-replace;boundary=frame")
-  return response
-
-
-def stream_webcam(request):
-  response = StreamingHttpResponse(detectYolov5_PPE(0),content_type="multipart/x-mixed-replace;boundary=frame")
-  return response
-
-
-
 
 class Camera:
     violations = []
@@ -439,10 +427,10 @@ class Violation:
         self.camName = 'Camera-00' + str(camId) if camId < 10 else 'Camera-0' + str(camId) 
         self.instance = instance 
         self.violationType = violationType
-        self.alertId = uuid.uuid4().hex
+        self.alertId = datetime.datetime.now().strftime("%Y-%m-%dT%H:%M:%SZ")
         self.dt = datetime.datetime.now().strftime("%Y-%m-%dT%H:%M:%SZ")
-        self.videoName = f'{ROOT_DIR}/yolo/outputs/alert-{self.alertId}.mp4'
-        self.imgName = f'{ROOT_DIR}/yolo/outputs/thumbnail-{self.alertId}.jpg'
+        self.videoName = f'yolo/outputs/alert-{self.alertId}.mp4'
+        self.imgName = f'yolo/outputs/thumbnail-{self.alertId}.jpg'
 
     def frameIncrement(self, positive, frame):
         completedFlag = False
@@ -481,7 +469,7 @@ class Violation:
 
     def sendNotification(self):
         alertMsg = f'There is a new Violation Alert'
-        payload = {"dt": self.dt, "duration": "00:00:10", "violation": self.violationType, "video": f"alert-{self.alertId}", "camera": self.camName}
+        payload = {"dt": self.dt, "duration": "00:00:10", "violation": self.violationType, "camera": self.camName}
         print(payload)
 
 camList = [ Camera(i) for i in range(100) ]
@@ -573,6 +561,14 @@ def stream_helmet(request):
   response = StreamingHttpResponse(detect_helmet(1),content_type="multipart/x-mixed-replace;boundary=frame")
   return response
 
-def stream_cam(request, cam):
-  response = StreamingHttpResponse(detect_helmet(cam),content_type="multipart/x-mixed-replace;boundary=frame")
+def stream_helmet_vid(request, vid):
+  response = StreamingHttpResponse(detect_helmet(vid),content_type="multipart/x-mixed-replace;boundary=frame")
+  return response
+
+def stream_PPE(request, rtsp):
+  response = StreamingHttpResponse(detectYolov5_PPE(rtsp),content_type="multipart/x-mixed-replace;boundary=frame")
+  return response
+
+def stream_PPE_webcam(request):
+  response = StreamingHttpResponse(detectYolov5_PPE(0),content_type="multipart/x-mixed-replace;boundary=frame")
   return response

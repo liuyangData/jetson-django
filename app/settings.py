@@ -31,7 +31,6 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
-    'vision.apps.VisionConfig',
     'yolo.apps.YoloConfig',
     'django.contrib.admin',
     'django.contrib.auth',
