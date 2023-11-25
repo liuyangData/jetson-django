@@ -15,6 +15,17 @@ To better the safety of workers in worksites, here is an AI enabled solution to 
     2. [Frameworks and Documentations](#32-frameworks-and-documentations)
     3. [Source Code and Model Weights](#33-source-code-and-model-weights)
     4. [PyTorch Installation for GPU Acceleration](#34-pytorch-installation-for-gpu-acceleration)
+    5. [Pip install Python Dependencies](#35-pip-install-python-dependencies)
+    6. [Start and Configure Django](#36-start-and-configure-django)
+4. [Solution Explained](#4-solution-explained)
+    1. [Demo APIs](#41-demo-apis)
+    2. [Custom Models Training](#42-custom-models-training)
+    3. [Multi-Stage Object Detection](#43-multi-stage-object-detection)
+    4. [Custom Person Object](#44-custom-person-object)
+    5. [Handling Uncertainties](#45-handling-uncertainties)
+    6. [Confidence Status and Alerts](#46-confidence-status-and-alerts)
+    7. [Handling Video Output](#47-handling-video-output)
+5. [Recommended Future Developments](#5-recommended-future-developments)
 
 
 ## 1. Motivation
@@ -178,6 +189,9 @@ python manage.py createsuperuser
 
 ## 4. Solution Explained
 
+![Helmet Detection Demo](resources/helmet.gif)
+
+
 ### 4.1. Demo APIs
 
 There are some demo functionality available for quick testing. You may use your webcam, RTSP cameras, or the sample videos to test the models. Use the yolo/ URL pattern to navigate through different demos once the server is running. 
@@ -223,13 +237,13 @@ You might be wondering, if there is a mask class as well as a person detector, w
 ![Handling Uncertainties](resources/uncertainty.png)
 
 
-### 4.5. Confidence Status and Alerts
+### 4.6. Confidence Status and Alerts
 
 To reduce false positives, a confidence score is used to accumulate over consecutive frames. Violations are logged only when a certain number of consecutive detected violations is met across a certain time threshold. To prevent excessive alerts for prolonged non-compliance, a cooldown duration is also implemented for each 'Person' object before the next alert is sent.
 
 Refer to the source code in yolo/view.py for implementation details.
 
-### 4.6. Handling Video Output
+### 4.7. Handling Video Output
 
 Upon confirming non-compliance, the algorithm records a 10-second video, saving it locally as an mp4 file on the Jetson device. A screenshot of the incident will also be saved as a jpg file. This feature enables safety officers to periodically review and take remedial actions based on non-compliance videos.
 
