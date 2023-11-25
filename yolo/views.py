@@ -204,9 +204,9 @@ class Person:
 		elif self.vType == 'HELMET ONLY':
 			violations = ['No Vest', 'No Mask']
 		elif self.vType == 'HELMET MASK ONLY':
-			violations = [ 'No Vest']
+			violations = ['No Vest']
 		elif self.vType == 'HELMET VEST ONLY':
-			violations = [ 'No Mask']
+			violations = ['No Mask']
 
 		for violation in violations:
 			alert = Alerts(datetime=str(self.dt), camera=self.camName, violation=violation)
@@ -309,11 +309,11 @@ def detectPPE(im, im0s, device, modelPPE, modelYOLO, camName):
       for ppe in detPersonPPE:
         personTracker.updatePPE(ppe)
 
-        # save alert history
-        personTracker.frameIncrement(xyxy, frame, camName)
-        label =personTracker.getLabel()
-        color = personTracker.getPersonColor()
-        annotator.box_label(xyxy, label, color=color)
+      # save alert history
+      personTracker.frameIncrement(xyxy, frame, camName)
+      label =personTracker.getLabel()
+      color = personTracker.getPersonColor()
+      annotator.box_label(xyxy, label, color=color)
                       
   frame = annotator.result()
 
