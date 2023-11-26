@@ -46,7 +46,7 @@ The solution empowers worksite supervisors to effortlessly deploy computer visio
 ![Worksite accident](resources/workflow.png)
 
 
-Video demonstration [video_link](https://youtu.be/JdgpN0AOmts)
+Video demonstration: https://youtu.be/JdgpN0AOmts
 
 ## 3. Getting Started
 
