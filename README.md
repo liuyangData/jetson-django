@@ -1,7 +1,5 @@
 # NVIDIA JETSON PROJEC: WORKSITE SAFETY COMPLIANCE 
 
-
-
 ![project banner](resources/hero.png)
 
 To better the safety of workers in worksites, here is an AI enabled solution to autonomously detection non-compliance cases using computer vision models and AI edge devices.
@@ -203,16 +201,24 @@ There are some demo functionality available for quick testing. You may use your 
 ### 4.2. Custom Models Training
 
 
-The Deep Learning models used in this project are trained on Google Colab to take advantage of its T4 GPU to accelerate training time. Two separate models are trained for this project
+The Deep Learning models used in this project are trained on Google Colab to take advantage of its T4 GPU to accelerate training time. 
+
+![Google Colab Notebook](resources/colab.png)
+
+
+The code and colab notebook can be found here for reference and custom training: https://colab.research.google.com/drive/1iDcTP_WlvlU3GLRw5fDvfkfKQO84Xm9D?usp=sharing
+
+Two separate models are trained for this project
 1. The first custom model is a helmet detector with two classes (helmet, and noHelmet)
 2. The second custom model is a more comprehensive PPE detector with 6 classes (helmet, noHelmet, mask, noMask, vest, noVest). 
-3. A pre-trained model (coco set) is also used as a person detector. 
+3. A pre-trained model (yolox coco set) is also used as a person detector. 
 
 All models are trained based on Ultralytics’ YOLO framework, using the YOLOv5x backbone (86.7 million parameters). Read more at: https://github.com/ultralytics/yolov5 
 
-Training data has been collected from various publicly available videos on YouTube, of which most of the training videos has been gathered from the YouTube channel HospitalConstruction (https://www.youtube.com/@HospitalConstruction) 
+Training data has been collected from various publicly available videos on YouTube, of which most of the training videos has been gathered from the YouTube channel HospitalConstruction (https://www.youtube.com/@HospitalConstruction). Subsequently, the images were labelled using a free online tool called MakeSense. Visit https://www.makesense.ai/ for more details.
 
-The code and colab notebook can be found here for reference and custom training: https://colab.research.google.com/drive/1iDcTP_WlvlU3GLRw5fDvfkfKQO84Xm9D?usp=sharing
+![MakeSense Labeling Tools](resources/makesense.png)
+
 
 
 ### 4.3. Multi-Stage Object Detection
